@@ -5,12 +5,10 @@ import com.shedule.repository.SheduleRepository;
 import com.shedule.service.SheduleService;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -29,7 +27,12 @@ public class SheduleServiceImpl implements SheduleService {
 
     @Override
     public List<Shedule> getByUser(Integer userId) {
-        return sheduleProcessing(sheduleRepository.findByUserId(userId).get(0));
+        List<Shedule> sheduleList = sheduleRepository.findByUserId(userId);
+        List<Shedule> processedSheduleList = new ArrayList<>();
+        for(Shedule shedule: sheduleList)
+            processedSheduleList.addAll(sheduleProcessing(shedule));
+
+        return processedSheduleList;
     }
 
     @Override
