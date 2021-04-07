@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     final Base64.Decoder decoder = Base64.getDecoder();
 
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) throws NoSuchPaddingException, NoSuchAlgorithmException {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository)  {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
     }
