@@ -1,17 +1,10 @@
-package com.shedule.rest;
+package com.schedule.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.shedule.model.Shedule;
-import com.shedule.model.SheduleUser;
-import com.shedule.model.Views;
-import com.shedule.rest.dto.SheduleDto;
-import com.shedule.rest.dto.UserDto;
-import com.shedule.service.SheduleService;
-import com.shedule.service.UserService;
-import com.sun.xml.internal.ws.api.message.Header;
-import com.sun.xml.internal.ws.api.message.Headers;
+import com.schedule.model.SheduleUser;
+import com.schedule.model.Views;
+import com.schedule.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

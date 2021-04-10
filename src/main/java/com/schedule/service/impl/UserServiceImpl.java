@@ -1,25 +1,15 @@
-package com.shedule.service.impl;
+package com.schedule.service.impl;
 
 
-import com.shedule.model.SheduleUser;
-import com.shedule.repository.RoleRepository;
-import com.shedule.repository.UserRepository;
-import com.shedule.service.UserService;
+import com.schedule.model.SheduleUser;
+import com.schedule.repository.RoleRepository;
+import com.schedule.repository.UserRepository;
+import com.schedule.service.UserService;
+import javafx.util.Pair;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 @Service
@@ -66,16 +56,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SheduleUser getByLoginAndPassword(String header) {
+        if(authorization(header))
+            return userRepository.findByLogin(getLoginAndPasswordFromHeader(header).getKey());
+        return null;
+    }
+
+    @Override
+    public boolean authorization(String header){
+        Pair<String,String> loginPassword = getLoginAndPasswordFromHeader(header);
+        if(!userRepository.existsByLogin(loginPassword.getKey()))
+            return false;
+        SheduleUser user = userRepository.findByLogin(loginPassword.getKey());
+        if (BCrypt.checkpw(loginPassword.getValue(), user.getPassword()))
+            return true;
+        return false;
+    }
+
+    public Pair<String,String> getLoginAndPasswordFromHeader(String header){
         header = header.replaceAll("Basic","").trim();
         byte[] decodedHeaderBytes = decoder.decode(header);
         String decodedHeader = new String(decodedHeaderBytes, StandardCharsets.UTF_8);;
         String login = decodedHeader.substring(0,decodedHeader.indexOf(":"));
         String password = decodedHeader.substring(decodedHeader.indexOf(":")+1);
-        if(!userRepository.existsByLogin(login))
-            return null;
-        SheduleUser user = userRepository.findByLogin(login);
-        if (BCrypt.checkpw(password, user.getPassword()))
-        return user;
-        return null;
+        return new Pair<String,String>(login,password);
     }
 }

@@ -1,5 +1,5 @@
-package com.shedule.service;
-import com.shedule.model.SheduleUser;
+package com.schedule.service;
+import com.schedule.model.SheduleUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,4 +15,6 @@ public interface UserService {
     SheduleUser create(String header) ;
 
     SheduleUser getByLoginAndPassword(String header);
+
+    boolean authorization(String header);
 }

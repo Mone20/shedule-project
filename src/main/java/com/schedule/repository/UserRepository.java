@@ -1,6 +1,6 @@
-package com.shedule.repository;
+package com.schedule.repository;
 
-import com.shedule.model.SheduleUser;
+import com.schedule.model.SheduleUser;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

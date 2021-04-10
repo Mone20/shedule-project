@@ -1,4 +1,4 @@
-package com.shedule.rest.dto;
+package com.schedule.rest.dto;
 
 public class UserDto {
     private String login;

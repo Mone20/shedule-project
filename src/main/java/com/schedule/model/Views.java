@@ -1,4 +1,4 @@
-package com.shedule.model;
+package com.schedule.model;
 
 public class Views {
         public static class Public {

@@ -1,7 +1,6 @@
-package com.shedule.model;
+package com.schedule.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;

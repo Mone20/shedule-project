@@ -1,4 +1,4 @@
-package com.shedule.model;
+package com.schedule.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @Lazy
 @Entity
 @Data
-public class Shedule {
+public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonView(Views.Public.class)
@@ -29,14 +29,24 @@ public class Shedule {
     private Integer userId;
     private Timestamp created;
     private Timestamp modified;
-
-    public Shedule(Time startTime,
-                   Time endTime,
-                   Date date,
-                   Long duration,
-                   Integer userId,
-                   Timestamp created,
-                   Timestamp modified) {
+    public Schedule(Integer id,
+                    Time startTime,
+                    Time endTime,
+                    Date date,
+                    Long duration) {
+        this.id = id;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.date = date;
+        this.duration = duration;
+    }
+    public Schedule(Time startTime,
+                    Time endTime,
+                    Date date,
+                    Long duration,
+                    Integer userId,
+                    Timestamp created,
+                    Timestamp modified) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.date = date;
@@ -46,7 +56,7 @@ public class Shedule {
         this.modified = modified;
     }
 
-    public Shedule() {
+    public Schedule() {
     }
 
     public Integer getId() {

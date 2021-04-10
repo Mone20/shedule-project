@@ -1,8 +1,8 @@
-package com.shedule.rest.dto;
+package com.schedule.rest.dto;
 
 import java.sql.Date;
 import java.sql.Time;
-public class SheduleDto {
+public class ScheduleDto {
     private Integer id;
     private Time startTime;
     private Time endTime;
@@ -10,7 +10,7 @@ public class SheduleDto {
     private Date date;
     private Integer userId;
 
-    public SheduleDto(Integer id, Time startTime, Time endTime, Long duration, Date date, Integer userId) {
+    public ScheduleDto(Integer id, Time startTime, Time endTime, Long duration, Date date, Integer userId) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -19,7 +19,7 @@ public class SheduleDto {
         this.userId = userId;
     }
 
-    public SheduleDto() {
+    public ScheduleDto() {
     }
 
     public Time getStartTime() {

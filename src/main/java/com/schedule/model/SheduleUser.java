@@ -1,4 +1,4 @@
-package com.shedule.model;
+package com.schedule.model;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
