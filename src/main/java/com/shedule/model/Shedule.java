@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 public class Shedule {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Public.class)
     private Integer id;
     @JsonView(Views.Public.class)
     private Time startTime;

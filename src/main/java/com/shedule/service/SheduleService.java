@@ -16,12 +16,12 @@ public interface SheduleService {
 
     Shedule getById(Integer id);
 
-    Shedule create(Time startTime,
+    List<Shedule> create(Time startTime,
                    Time endTime,
                    Date date,
                    Long duration,
                    Integer userId);
-    Shedule update(Integer id,
+    List<Shedule> update(Integer id,
                    Time startTime,
                    Time endTime,
                    Date date,

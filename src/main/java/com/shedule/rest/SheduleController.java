@@ -26,7 +26,7 @@ public class SheduleController {
 
     @PostMapping()
     @JsonView(Views.Public.class)
-    public Shedule createShedule(@RequestBody SheduleDto body) {
+    public List<Shedule> createShedule(@RequestBody SheduleDto body) {
         return sheduleService.create(body.getStartTime(),
                 body.getEndTime(),
                 body.getDate(),
@@ -36,7 +36,7 @@ public class SheduleController {
 
     @PutMapping()
     @JsonView(Views.Public.class)
-    public Shedule updateShedule(@RequestBody SheduleDto body) {
+    public List<Shedule> updateShedule(@RequestBody SheduleDto body) {
         return sheduleService.update(body.getId(),
                 body.getStartTime(),
                 body.getEndTime(),

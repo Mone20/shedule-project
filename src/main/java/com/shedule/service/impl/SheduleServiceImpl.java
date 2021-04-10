@@ -41,13 +41,14 @@ public class SheduleServiceImpl implements SheduleService {
     }
 
     @Override
-    public Shedule create(Time startTime, Time endTime, Date date, Long duration, Integer userId) {
+    public List<Shedule> create(Time startTime, Time endTime, Date date, Long duration, Integer userId) {
         Shedule shedule = new Shedule(startTime, endTime, date, duration, userId, new Timestamp(System.currentTimeMillis()), null);
-        return sheduleRepository.save(shedule);
+        sheduleRepository.save(shedule);
+        return sheduleProcessing(shedule);
     }
 
     @Override
-    public Shedule update(Integer id, Time startTime, Time endTime, Date date, Long duration) {
+    public List<Shedule> update(Integer id, Time startTime, Time endTime, Date date, Long duration) {
         Shedule shedule = sheduleRepository.findById(id).get();
         shedule.setStartTime(startTime);
         shedule.setEndTime(endTime);
@@ -55,7 +56,7 @@ public class SheduleServiceImpl implements SheduleService {
         shedule.setDuration(duration);
         shedule.setModified(new Timestamp(System.currentTimeMillis()));
         sheduleRepository.save(shedule);
-        return shedule;
+        return sheduleProcessing(shedule);
     }
 
     @Override
