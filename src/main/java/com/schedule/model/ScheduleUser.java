@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 
 @Entity
-public class SheduleUser {
+public class ScheduleUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonView(Views.Public.class)
@@ -17,9 +17,9 @@ public class SheduleUser {
     @JsonView(Views.Public.class)
     private Role role;
 
-    public SheduleUser() {
+    public ScheduleUser() {
     }
-    public SheduleUser(String login, String password, Role role) {
+    public ScheduleUser(String login, String password, Role role) {
         this.login = login;
         this.password = password;
         this.role = role;

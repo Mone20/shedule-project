@@ -14,7 +14,7 @@ public class Role {
     @JsonView(Views.Public.class)
     private String name;
     @OneToMany
-    private List<SheduleUser> users;
+    private List<ScheduleUser> users;
 
     public Role() {
     }

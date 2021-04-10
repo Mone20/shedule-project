@@ -14,6 +14,8 @@ public interface ScheduleService {
 
     List<Schedule> getByUser(Integer userId);
 
+    List<Schedule> getCurrentByUser(Integer userId);
+
     Schedule getById(Integer id);
 
     List<Schedule> create(Time startTime,

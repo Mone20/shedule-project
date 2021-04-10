@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +59,18 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setModified(new Timestamp(System.currentTimeMillis()));
         scheduleRepository.save(schedule);
         return sheduleProcessing(schedule);
+    }
+    @Override
+   public List<Schedule> getCurrentByUser(Integer userId){
+        java.util.Date dateNow = new java.util.Date();
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd");
+        List<Schedule> schedules = scheduleRepository.findByDateAndUserId(Date.valueOf(formatForDateNow.format(dateNow)),userId);
+        List<Schedule> processedScheduleList = new ArrayList<>();
+        for(Schedule schedule : schedules)
+            processedScheduleList.addAll(sheduleProcessing(schedule));
+
+        return processedScheduleList;
+
     }
 
     @Override

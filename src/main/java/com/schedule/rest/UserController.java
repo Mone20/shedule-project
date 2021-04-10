@@ -1,7 +1,7 @@
 package com.schedule.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.schedule.model.SheduleUser;
+import com.schedule.model.ScheduleUser;
 import com.schedule.model.Views;
 import com.schedule.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +16,13 @@ public class UserController {
 
     @GetMapping()
     @JsonView(Views.Public.class)
-    public SheduleUser createUser(@RequestHeader("authorization") String header) {
+    public ScheduleUser createUser(@RequestHeader("authorization") String header) {
         return userService.create(header);
     }
 
     @GetMapping("/get")
     @JsonView(Views.Public.class)
-    public SheduleUser getUser(@RequestHeader("authorization") String header) {
+    public ScheduleUser getUser(@RequestHeader("authorization") String header) {
         return userService.getByLoginAndPassword(header);
     }
 }

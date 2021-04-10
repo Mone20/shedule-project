@@ -1,7 +1,7 @@
 package com.schedule.service.impl;
 
 
-import com.schedule.model.SheduleUser;
+import com.schedule.model.ScheduleUser;
 import com.schedule.repository.RoleRepository;
 import com.schedule.repository.UserRepository;
 import com.schedule.service.UserService;
@@ -25,35 +25,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<SheduleUser> getAll() {
-        return (List<SheduleUser>) userRepository.findAll();
+    public List<ScheduleUser> getAll() {
+        return (List<ScheduleUser>) userRepository.findAll();
     }
 
     @Override
-    public List<SheduleUser> getByRole(String role) {
+    public List<ScheduleUser> getByRole(String role) {
         return userRepository.findByRoleId(roleRepository.findByName(role).getId());
     }
 
     @Override
-    public SheduleUser getById(Integer id) {
+    public ScheduleUser getById(Integer id) {
         return null;
     }
 
     @Override
-    public SheduleUser create(String header) {
+    public ScheduleUser create(String header) {
         Pair<String,String> loginPassword = getLoginAndPasswordFromHeader(header);
         String login = loginPassword.getKey();
         String password = loginPassword.getValue();
         if(userRepository.existsByLogin(login))
             return null;
         String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
-        SheduleUser user = new SheduleUser(login,hashed,roleRepository.findByName("user"));
+        ScheduleUser user = new ScheduleUser(login,hashed,roleRepository.findByName("user"));
         userRepository.save(user);
         return user;
     }
 
     @Override
-    public SheduleUser getByLoginAndPassword(String header) {
+    public ScheduleUser getByLoginAndPassword(String header) {
         if(authorization(header))
             return userRepository.findByLogin(getLoginAndPasswordFromHeader(header).getKey());
         return null;
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
         Pair<String,String> loginPassword = getLoginAndPasswordFromHeader(header);
         if(!userRepository.existsByLogin(loginPassword.getKey()))
             return false;
-        SheduleUser user = userRepository.findByLogin(loginPassword.getKey());
+        ScheduleUser user = userRepository.findByLogin(loginPassword.getKey());
         if (BCrypt.checkpw(loginPassword.getValue(), user.getPassword()))
             return true;
         return false;

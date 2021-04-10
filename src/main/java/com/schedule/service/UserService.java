@@ -1,20 +1,20 @@
 package com.schedule.service;
-import com.schedule.model.SheduleUser;
+import com.schedule.model.ScheduleUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
 public interface UserService {
 
-    List<SheduleUser> getAll();
+    List<ScheduleUser> getAll();
 
-    List<SheduleUser> getByRole(String role);
+    List<ScheduleUser> getByRole(String role);
 
-    SheduleUser getById(Integer id);
+    ScheduleUser getById(Integer id);
 
-    SheduleUser create(String header) ;
+    ScheduleUser create(String header) ;
 
-    SheduleUser getByLoginAndPassword(String header);
+    ScheduleUser getByLoginAndPassword(String header);
 
     boolean authorization(String header);
 }

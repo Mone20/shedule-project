@@ -58,6 +58,13 @@ public class ScheduleController {
         return scheduleService.getByUser(Integer.parseInt(userId));
         return null;
     }
+    @GetMapping("/current/{userId}")
+    @JsonView(Views.Public.class)
+    public List<Schedule> getCurrentByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
+        if(userService.authorization(header))
+            return scheduleService.getCurrentByUser(Integer.parseInt(userId));
+        return null;
+    }
 
     @DeleteMapping("/{id}")
     public  void delete(@PathVariable String id, @RequestHeader("authorization") String header){
