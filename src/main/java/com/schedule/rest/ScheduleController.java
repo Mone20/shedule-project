@@ -39,11 +39,11 @@ public class ScheduleController {
         return null;
     }
 
-    @PutMapping()
+    @PutMapping("/{id}")
     @JsonView(Views.Public.class)
-    public List<Schedule> updateSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header) {
+    public List<Schedule> updateSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header,@PathVariable String id) {
         if(userService.authorization(header))
-        return scheduleService.update(body.getId(),
+        return scheduleService.update(Integer.parseInt(id),
                 body.getStartTime(),
                 body.getEndTime(),
                 body.getDate(),

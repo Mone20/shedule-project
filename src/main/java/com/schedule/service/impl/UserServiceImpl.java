@@ -41,11 +41,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SheduleUser create(String header) {
-        header = header.replaceAll("Basic","").trim();
-        byte[] decodedHeaderBytes = decoder.decode(header);
-        String decodedHeader = new String(decodedHeaderBytes, StandardCharsets.UTF_8);;
-        String login = decodedHeader.substring(0,decodedHeader.indexOf(":"));
-        String password = decodedHeader.substring(decodedHeader.indexOf(":")+1);
+        Pair<String,String> loginPassword = getLoginAndPasswordFromHeader(header);
+        String login = loginPassword.getKey();
+        String password = loginPassword.getValue();
         if(userRepository.existsByLogin(login))
             return null;
         String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
