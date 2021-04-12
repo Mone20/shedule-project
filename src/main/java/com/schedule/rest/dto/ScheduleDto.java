@@ -10,6 +10,9 @@ public class ScheduleDto {
     private Date date;
     private Integer userId;
 
+
+    private Integer mode;
+
     public ScheduleDto(Integer id, Time startTime, Time endTime, Long duration, Date date, Integer userId) {
         this.id = id;
         this.startTime = startTime;
@@ -68,5 +71,13 @@ public class ScheduleDto {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getMode() {
+        return mode;
+    }
+
+    public void setMode(Integer mode) {
+        this.mode = mode;
     }
 }

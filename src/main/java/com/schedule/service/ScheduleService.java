@@ -12,24 +12,25 @@ public interface ScheduleService {
 
     List<Schedule> getAll();
 
-    List<Schedule> getByUser(Integer userId);
+    List<Schedule> getByUser(Integer userId, Integer mode);
 
-    List<Schedule> getCurrentByUser(Integer userId);
+    List<Schedule> getCurrentByUser(Integer userId, Integer mode);
 
-    Schedule getById(Integer id);
+    List<Schedule> getById(Integer id, Integer mode);
 
     List<Schedule> create(Time startTime,
                           Time endTime,
                           Date date,
                           Long duration,
-                          Integer userId);
+                          Integer userId,
+                          Integer mode);
     List<Schedule> update(Integer id,
                           Time startTime,
                           Time endTime,
                           Date date,
-                          Long duration);
+                          Long duration,
+                          Integer mode);
 
     void delete(Integer id);
-
 
 }

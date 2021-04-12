@@ -35,7 +35,8 @@ public class ScheduleController {
                 body.getEndTime(),
                 body.getDate(),
                 body.getDuration(),
-                body.getUserId());
+                body.getUserId(),
+                body.getMode());
         return null;
     }
 
@@ -47,22 +48,22 @@ public class ScheduleController {
                 body.getStartTime(),
                 body.getEndTime(),
                 body.getDate(),
-                body.getDuration()
-                );
+                body.getDuration(),
+                body.getMode());
         return null;
     }
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/{mode}")
     @JsonView(Views.Public.class)
-    public List<Schedule> getByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
+    public List<Schedule> getByUser(@PathVariable String userId, @PathVariable String mode,@RequestHeader("authorization") String header) {
         if(userService.authorization(header))
-        return scheduleService.getByUser(Integer.parseInt(userId));
+        return scheduleService.getByUser(Integer.parseInt(userId),Integer.parseInt(mode));
         return null;
     }
-    @GetMapping("/current/{userId}")
+    @GetMapping("/current/{userId}/{mode}")
     @JsonView(Views.Public.class)
-    public List<Schedule> getCurrentByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
+    public List<Schedule> getCurrentByUser(@PathVariable String userId, @PathVariable String mode,@RequestHeader("authorization") String header) {
         if(userService.authorization(header))
-            return scheduleService.getCurrentByUser(Integer.parseInt(userId));
+            return scheduleService.getCurrentByUser(Integer.parseInt(userId), Integer.parseInt(mode));
         return null;
     }
 
