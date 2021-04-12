@@ -113,7 +113,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     private long getTimeWithNetwork(long time) {
-        return time / 10;
+        return (long) (time * Constants.DUTY_FACTOR);
     }
 
 }
