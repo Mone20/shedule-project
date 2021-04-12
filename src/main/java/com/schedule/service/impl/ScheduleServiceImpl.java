@@ -41,7 +41,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> create(Time startTime, Time endTime, Date date, Long duration, Integer userId, Integer mode) {
-        Schedule schedule = new Schedule(startTime, endTime, date, duration, userId, new Timestamp(System.currentTimeMillis()), null);
+        Schedule schedule = new Schedule(startTime, endTime, date, duration, userId, new Timestamp(System.currentTimeMillis()), null, mode);
         scheduleRepository.save(schedule);
         return changeModeProcessing(schedule);
     }
@@ -54,6 +54,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setDate(date);
         schedule.setDuration(duration);
         schedule.setModified(new Timestamp(System.currentTimeMillis()));
+        schedule.setMode(mode);
         scheduleRepository.save(schedule);
         return changeModeProcessing(schedule);
     }

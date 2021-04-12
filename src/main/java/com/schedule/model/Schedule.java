@@ -48,7 +48,8 @@ public class Schedule {
                     Long duration,
                     Integer userId,
                     Timestamp created,
-                    Timestamp modified) {
+                    Timestamp modified,
+                    Integer mode) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.date = date;
@@ -56,6 +57,7 @@ public class Schedule {
         this.userId = userId;
         this.created = created;
         this.modified = modified;
+        this.mode = mode;
     }
 
     public Schedule() {
