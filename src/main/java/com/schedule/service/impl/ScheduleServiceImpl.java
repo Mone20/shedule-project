@@ -24,26 +24,26 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> getAll() {
-        return (List<Schedule>) scheduleRepository.findAll();
+        return listScheduleProcessing((List<Schedule>) scheduleRepository.findAll());
     }
 
     @Override
-    public List<Schedule> getByUser(Integer userId, Integer mode) {
+    public List<Schedule> getByUser(Integer userId) {
         List<Schedule> scheduleList = scheduleRepository.findByUserId(userId);
-        return listScheduleProcessing(scheduleList, mode);
+        return listScheduleProcessing(scheduleList);
     }
 
     @Override
-    public List<Schedule> getById(Integer id, Integer mode) {
+    public List<Schedule> getById(Integer id) {
         Schedule schedule = scheduleRepository.findById(id).get();
-        return changeModeProcessing(schedule, mode);
+        return changeModeProcessing(schedule);
     }
 
     @Override
     public List<Schedule> create(Time startTime, Time endTime, Date date, Long duration, Integer userId, Integer mode) {
         Schedule schedule = new Schedule(startTime, endTime, date, duration, userId, new Timestamp(System.currentTimeMillis()), null);
         scheduleRepository.save(schedule);
-        return changeModeProcessing(schedule, mode);
+        return changeModeProcessing(schedule);
     }
 
     @Override
@@ -55,16 +55,16 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setDuration(duration);
         schedule.setModified(new Timestamp(System.currentTimeMillis()));
         scheduleRepository.save(schedule);
-        return changeModeProcessing(schedule, mode);
+        return changeModeProcessing(schedule);
     }
 
     @Override
-    public List<Schedule> getCurrentByUser(Integer userId, Integer mode) {
+    public List<Schedule> getCurrentByUser(Integer userId) {
         java.util.Date dateNow = new java.util.Date();
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd");
         List<Schedule> schedules = scheduleRepository.findByDateAndUserId(Date.valueOf(formatForDateNow.format(dateNow)), userId);
 
-        return listScheduleProcessing(schedules,mode);
+        return listScheduleProcessing(schedules);
 
     }
 
@@ -74,20 +74,20 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
 
-    private List<Schedule> changeModeProcessing(Schedule schedule, Integer mode) {
-        if (mode == Constants.UNIFORM_DISTRIBUTION)
+    private List<Schedule> changeModeProcessing(Schedule schedule) {
+        if (schedule.getMode() == Constants.UNIFORM_DISTRIBUTION)
             return scheduleProcessing(schedule);
-        if (mode == Constants.BOUNDARY_DISTRIBUTION){}
+        if (schedule.getMode() == Constants.BOUNDARY_DISTRIBUTION){}
         //TODO
         return null;
 
     }
 
 
-    private List<Schedule> listScheduleProcessing(List<Schedule> scheduleList, Integer mode) {
+    private List<Schedule> listScheduleProcessing(List<Schedule> scheduleList) {
         List<Schedule> processedScheduleList = new ArrayList<>();
         for (Schedule schedule : scheduleList)
-            processedScheduleList.addAll(Objects.requireNonNull(changeModeProcessing(schedule, mode)));
+            processedScheduleList.addAll(Objects.requireNonNull(changeModeProcessing(schedule)));
 
         return processedScheduleList;
 

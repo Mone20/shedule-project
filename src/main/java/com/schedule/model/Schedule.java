@@ -27,6 +27,8 @@ public class Schedule {
     private Long duration;
     @JsonView(Views.Internal.class)
     private Integer userId;
+    @JsonView(Views.Internal.class)
+    private Integer mode;
     private Timestamp created;
     private Timestamp modified;
     public Schedule(Integer id,
@@ -121,5 +123,13 @@ public class Schedule {
 
     public void setModified(Timestamp modified) {
         this.modified = modified;
+    }
+
+    public Integer getMode() {
+        return mode;
+    }
+
+    public void setMode(Integer mode) {
+        this.mode = mode;
     }
 }

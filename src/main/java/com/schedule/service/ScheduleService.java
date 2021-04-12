@@ -12,11 +12,11 @@ public interface ScheduleService {
 
     List<Schedule> getAll();
 
-    List<Schedule> getByUser(Integer userId, Integer mode);
+    List<Schedule> getByUser(Integer userId);
 
-    List<Schedule> getCurrentByUser(Integer userId, Integer mode);
+    List<Schedule> getCurrentByUser(Integer userId);
 
-    List<Schedule> getById(Integer id, Integer mode);
+    List<Schedule> getById(Integer id);
 
     List<Schedule> create(Time startTime,
                           Time endTime,

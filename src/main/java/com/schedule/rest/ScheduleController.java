@@ -52,18 +52,18 @@ public class ScheduleController {
                 body.getMode());
         return null;
     }
-    @GetMapping("/{userId}/{mode}")
+    @GetMapping("/{userId}")
     @JsonView(Views.Public.class)
-    public List<Schedule> getByUser(@PathVariable String userId, @PathVariable String mode,@RequestHeader("authorization") String header) {
+    public List<Schedule> getByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
         if(userService.authorization(header))
-        return scheduleService.getByUser(Integer.parseInt(userId),Integer.parseInt(mode));
+        return scheduleService.getByUser(Integer.parseInt(userId));
         return null;
     }
-    @GetMapping("/current/{userId}/{mode}")
+    @GetMapping("/current/{userId}")
     @JsonView(Views.Public.class)
-    public List<Schedule> getCurrentByUser(@PathVariable String userId, @PathVariable String mode,@RequestHeader("authorization") String header) {
+    public List<Schedule> getCurrentByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
         if(userService.authorization(header))
-            return scheduleService.getCurrentByUser(Integer.parseInt(userId), Integer.parseInt(mode));
+            return scheduleService.getCurrentByUser(Integer.parseInt(userId));
         return null;
     }
 
