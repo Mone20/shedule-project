@@ -77,9 +77,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private List<Schedule> changeModeProcessing(Schedule schedule) {
         if (schedule.getMode() == Constants.UNIFORM_DISTRIBUTION)
-            return scheduleProcessing(schedule);
-        if (schedule.getMode() == Constants.BOUNDARY_DISTRIBUTION){}
-        //TODO
+            return firstMethodScheduleProcessing(schedule);
+        if (schedule.getMode() == Constants.BOUNDARY_DISTRIBUTION)
+            return secondMethodScheduleProcessing(schedule);
         return null;
 
     }
@@ -94,7 +94,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     }
 
-    private List<Schedule> scheduleProcessing(Schedule schedule) {
+    private List<Schedule> firstMethodScheduleProcessing(Schedule schedule) {
         long fullWorkingTime = Math.abs(schedule.getEndTime().getTime() - schedule.getStartTime().getTime()) / 60000;
         long countOnDay = getTimeWithNetwork(fullWorkingTime);
         long minDuration = schedule.getDuration();
@@ -103,6 +103,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         long countOfPeriod = countOnDay / minDuration;
         long periodDuration = fullWorkingTime * 60000 / countOfPeriod;
         List<Schedule> scheduleList = new ArrayList<>();
+
         Time startTime = schedule.getStartTime();
         for (int i = 0; i < countOfPeriod; i++) {
             scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()), new Time(startTime.getTime() + periodDuration), schedule.getDate(), minDuration));
@@ -112,6 +113,32 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleList;
 
     }
+
+    private List<Schedule> secondMethodScheduleProcessing(Schedule schedule) {
+        long fullWorkingTime = Math.abs(schedule.getEndTime().getTime() - schedule.getStartTime().getTime()) / 60000;
+        long countOnDay = getTimeWithNetwork(fullWorkingTime);
+        long minDuration = schedule.getDuration();
+        while (countOnDay % minDuration != 0)
+            minDuration++;
+        long countOfPeriod = (countOnDay / minDuration) * 2;
+        long periodDuration = fullWorkingTime * 60000 / countOfPeriod;
+        List<Schedule> scheduleList = new ArrayList<>();
+
+        Time startTime = schedule.getStartTime();
+        for (int i = 0; i < countOfPeriod; i++) {
+            if(i == 0 || i == countOfPeriod - 1){
+                scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()), new Time(startTime.getTime() + periodDuration), schedule.getDate(), minDuration * 3));
+                startTime.setTime(startTime.getTime() + periodDuration * 3);
+                continue;
+            }
+            scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()), new Time(startTime.getTime() + periodDuration), schedule.getDate(), minDuration));
+            startTime.setTime(startTime.getTime() + periodDuration);
+        }
+
+        return scheduleList;
+
+    }
+
 
     private long getTimeWithNetwork(long time) {
         return (long) (time * Constants.DUTY_FACTOR);
