@@ -23,9 +23,9 @@ public class Schedule {
     private String date;
     @JsonView(Views.Public.class)
     private Long duration;
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Private.class)
     private Integer userId;
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Private.class)
     private Integer mode;
     private Timestamp created;
     private Timestamp modified;
