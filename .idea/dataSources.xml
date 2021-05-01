@@ -7,5 +7,11 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5432/shedule</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="pagila@localhost" uuid="28be9e35-d7a6-4802-8a21-b08e7ffcbe0d">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/pagila</jdbc-url>
+    </data-source>
   </component>
 </project>

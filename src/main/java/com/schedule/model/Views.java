@@ -6,7 +6,7 @@ public class Views {
 
         public static class Internal {
         }
-        public  static class Private {
+        public  static class Private extends Public {
 
         }
 

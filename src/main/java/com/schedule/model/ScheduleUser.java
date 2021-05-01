@@ -10,11 +10,11 @@ public class ScheduleUser {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonView(Views.Public.class)
     private Integer id;
-    private String login;
     @JsonView(Views.Private.class)
+    private String login;
     private String password;
-    @ManyToOne
     @JsonView(Views.Public.class)
+    @ManyToOne
     private Role role;
 
     public ScheduleUser() {

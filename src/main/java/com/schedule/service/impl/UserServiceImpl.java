@@ -54,20 +54,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ScheduleUser getByLoginAndPassword(String header) {
-        if(authorization(header))
+        if(authorization(header).length() > 0)
             return userRepository.findByLogin(getLoginAndPasswordFromHeader(header).getKey());
         return null;
     }
 
     @Override
-    public boolean authorization(String header){
+    public String authorization(String header){
         Pair<String,String> loginPassword = getLoginAndPasswordFromHeader(header);
         if(!userRepository.existsByLogin(loginPassword.getKey()))
-            return false;
+            return "";
         ScheduleUser user = userRepository.findByLogin(loginPassword.getKey());
         if (BCrypt.checkpw(loginPassword.getValue(), user.getPassword()))
-            return true;
-        return false;
+            return user.getRole().getName();
+        return "";
     }
 
     public Pair<String,String> getLoginAndPasswordFromHeader(String header){

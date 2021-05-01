@@ -38,4 +38,12 @@ public class Role {
     public void setName(String name) {
         this.name = name;
     }
+
+    public List<ScheduleUser> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<ScheduleUser> users) {
+        this.users = users;
+    }
 }
