@@ -56,15 +56,16 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleServiceModel> update(Integer id, String startTime, String endTime, String date, Long duration, Integer mode) {
-        Schedule schedule = aes256.decryptScheduleCopy(scheduleRepository.findById(id).get());
+        Schedule schedule = aes256.decryptSchedule(scheduleRepository.findById(id).get());
         schedule.setStartTime(startTime);
         schedule.setEndTime(endTime);
         schedule.setDate(date);
         schedule.setDuration(duration);
         schedule.setModified(new Timestamp(System.currentTimeMillis()));
         schedule.setMode(mode);
-        scheduleRepository.save(aes256.encryptScheduleCopy(schedule));
-        return changeModeProcessing(schedule);
+        Schedule scheduleCopy = schedule.clone();
+        scheduleRepository.save(aes256.encryptSchedule(schedule));
+        return changeModeProcessing(scheduleCopy);
     }
 
     @Override
