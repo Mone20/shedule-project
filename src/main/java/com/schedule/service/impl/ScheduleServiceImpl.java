@@ -72,7 +72,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<ScheduleServiceModel> getCurrentByUser(Integer userId) {
         java.util.Date dateNow = new java.util.Date();
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd");
-        List<Schedule> schedules = scheduleRepository.findByDateAndUserId(Date.valueOf(formatForDateNow.format(dateNow)), userId);
+        List<Schedule> schedules = scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDateNow.format(dateNow)), userId);
+        if(schedules == null || schedules.size() == 0){
+            dateNow.setTime(dateNow.getTime() - Constants.COUNT_MS_ON_DAY);
+            schedules = scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDateNow.format(dateNow)), userId);
+        }
 
         return listScheduleProcessing(aes256.decryptScheduleListCopy(schedules));
 
