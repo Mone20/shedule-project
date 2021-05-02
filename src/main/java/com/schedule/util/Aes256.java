@@ -23,7 +23,6 @@ public class Aes256 {
             secretKey = (SecretKey) objectInputStream.readObject();
         } catch (ClassNotFoundException | IOException e) {
             secretKey = null;
-            throw  new RuntimeException("Secret Key not exists");
         }
     }
 
