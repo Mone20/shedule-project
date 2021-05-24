@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -55,6 +56,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> create(String startTime, String endTime, String date, Long duration, Integer userId, Integer mode) {
+        SimpleDateFormat formatForDate = new SimpleDateFormat("yyyy-MM-dd");
+        List<Schedule> schedules = scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDate.format(Date.valueOf(date))), userId);
+        if(schedules != null && !schedules.isEmpty())
+            return null;
         Schedule schedule = new Schedule(startTime, endTime, date, duration, userId, new Timestamp(System.currentTimeMillis()), null, mode);
         scheduleRepository.save(aes256.encryptScheduleCopy(schedule));
         return changeModeProcessing(schedule);
@@ -63,6 +68,12 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<Schedule> update(Integer id, String startTime, String endTime, String date, Long duration, Integer mode) {
         Schedule schedule = aes256.decryptSchedule(scheduleRepository.findById(id).get());
+        java.util.Date dateNow = new java.util.Date();
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd");
+        List<Schedule> schedules =  scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDateNow.format(dateNow)), schedule.getUserId());
+        if(schedules != null && !schedules.isEmpty())
+            return changeModeProcessing(schedules.get(0));
+
         schedule.setStartTime(startTime);
         schedule.setEndTime(endTime);
         schedule.setDate(date);
