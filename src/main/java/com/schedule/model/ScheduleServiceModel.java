@@ -33,7 +33,21 @@ public class ScheduleServiceModel {
         this.date = date;
         this.duration = duration;
     }
-
+    public ScheduleServiceModel(Integer id,
+                                Time startTime,
+                                Time endTime,
+                                Date date,
+                                Long duration,
+                                Integer userId,
+                                Integer mode) {
+        this.id = id;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.date = date;
+        this.duration = duration;
+        this.userId = userId;
+        this.mode = mode;
+    }
     public ScheduleServiceModel(Schedule schedule) {
         this.startTime = Time.valueOf(schedule.getStartTime());
         this.endTime = Time.valueOf(schedule.getEndTime());
@@ -116,5 +130,16 @@ public class ScheduleServiceModel {
 
     public void setMode(Integer mode) {
         this.mode = mode;
+    }
+    @Override
+    public ScheduleServiceModel clone() {
+        return new ScheduleServiceModel(
+                this.id,
+                this.startTime,
+                this.endTime,
+                this.date,
+                this.duration,
+                this.userId,
+                this.mode);
     }
 }

@@ -3,7 +3,6 @@ package com.schedule.rest;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.schedule.Constants;
 import com.schedule.model.Schedule;
-import com.schedule.model.ScheduleServiceModel;
 import com.schedule.model.Views;
 import com.schedule.rest.dto.ScheduleDto;
 import com.schedule.service.ScheduleService;
@@ -31,12 +30,13 @@ public class ScheduleController {
 
     @PostMapping()
     @JsonView(Views.Public.class)
-    public List<ScheduleServiceModel> createSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header) {
+    public List<Schedule> createSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header) {
+        body = scheduleService.getDecodedScheduleDto(body);
         String role = userService.authorization(header);
         if(role.equals(Constants.ROLES.ADMIN) || role.equals(Constants.ROLES.USER))
-        return scheduleService.create(body.getStartTime().toString(),
-                body.getEndTime().toString(),
-                body.getDate().toString(),
+        return scheduleService.create(body.getStartTime(),
+                body.getEndTime(),
+                body.getDate(),
                 body.getDuration(),
                 body.getUserId(),
                 body.getMode());
@@ -45,20 +45,21 @@ public class ScheduleController {
 
     @PutMapping("/{id}")
     @JsonView(Views.Public.class)
-    public List<ScheduleServiceModel> updateSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header, @PathVariable String id) {
+    public List<Schedule> updateSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header, @PathVariable String id) {
+        body = scheduleService.getDecodedScheduleDto(body);
         String role = userService.authorization(header);
         if(role.equals(Constants.ROLES.ADMIN) || role.equals(Constants.ROLES.USER))
         return scheduleService.update(Integer.parseInt(id),
-                body.getStartTime().toString(),
-                body.getEndTime().toString(),
-                body.getDate().toString(),
+                body.getStartTime(),
+                body.getEndTime(),
+                body.getDate(),
                 body.getDuration(),
                 body.getMode());
         return null;
     }
     @GetMapping("/{userId}")
     @JsonView(Views.Public.class)
-    public List<ScheduleServiceModel> getByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
+    public List<Schedule> getByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
         String role = userService.authorization(header);
         if(role.equals(Constants.ROLES.ADMIN) || role.equals(Constants.ROLES.USER))
         return scheduleService.getByUser(Integer.parseInt(userId));
@@ -66,7 +67,7 @@ public class ScheduleController {
     }
     @GetMapping("/current/{userId}")
     @JsonView(Views.Public.class)
-    public List<ScheduleServiceModel> getCurrentByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
+    public List<Schedule> getCurrentByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
         String role = userService.authorization(header);
         if(role.equals(Constants.ROLES.ADMIN) || role.equals(Constants.ROLES.USER))
             return scheduleService.getCurrentByUser(Integer.parseInt(userId));

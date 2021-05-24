@@ -4,16 +4,16 @@ import java.sql.Date;
 import java.sql.Time;
 public class ScheduleDto {
     private Integer id;
-    private Time startTime;
-    private Time endTime;
+    private String startTime;
+    private String endTime;
     private Long duration;
-    private Date date;
+    private String date;
     private Integer userId;
 
 
     private Integer mode;
 
-    public ScheduleDto(Integer id, Time startTime, Time endTime, Long duration, Date date, Integer userId) {
+    public ScheduleDto(Integer id, String startTime, String endTime, Long duration, String date, Integer userId) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -25,19 +25,19 @@ public class ScheduleDto {
     public ScheduleDto() {
     }
 
-    public Time getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Time startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Time getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Time endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 
@@ -49,11 +49,11 @@ public class ScheduleDto {
         this.duration = duration;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 
 @Lazy
@@ -47,8 +49,29 @@ public class Schedule {
         this.modified = modified;
         this.mode = mode;
     }
-
+    public Schedule  (Integer id,
+                                String startTime,
+                               String endTime,
+                               String date,
+                                Long duration) {
+        this.id = id;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.date = date;
+        this.duration = duration;
+    }
     public Schedule() {
+    }
+
+    public Schedule(ScheduleServiceModel scheduleServiceModel){
+        this.startTime = scheduleServiceModel.getStartTime().toString();
+        this.endTime = scheduleServiceModel.getEndTime().toString();
+        this.date = scheduleServiceModel.getDate().toString();
+        this.duration = scheduleServiceModel.getDuration();
+        this.userId = scheduleServiceModel.getUserId();
+        this.created = scheduleServiceModel.getCreated();
+        this.modified = scheduleServiceModel.getModified();
+        this.mode = scheduleServiceModel.getMode();
     }
 
     public Integer getId() {

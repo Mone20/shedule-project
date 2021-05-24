@@ -4,15 +4,19 @@ import com.schedule.Constants;
 import com.schedule.model.Schedule;
 import com.schedule.model.ScheduleServiceModel;
 import com.schedule.repository.ScheduleRepository;
+import com.schedule.rest.dto.ScheduleDto;
 import com.schedule.service.ScheduleService;
 import com.schedule.util.Aes256;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+
+import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,6 +24,8 @@ import java.util.Objects;
 public class ScheduleServiceImpl implements ScheduleService {
     final ScheduleRepository scheduleRepository;
     private final Aes256 aes256 = new Aes256();
+    private final Base64.Encoder encoder = Base64.getEncoder();
+    private final Base64.Decoder decoder = Base64.getDecoder();
 
     public ScheduleServiceImpl(ScheduleRepository scheduleRepository) {
         this.scheduleRepository = scheduleRepository;
@@ -32,30 +38,30 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> getAll() {
-        return aes256.decryptScheduleListCopy((List<Schedule>) scheduleRepository.findAll());
+        return getEncodedScheduleList(aes256.decryptScheduleListCopy((List<Schedule>) scheduleRepository.findAll()));
     }
 
     @Override
-    public List<ScheduleServiceModel> getByUser(Integer userId) {
+    public List<Schedule> getByUser(Integer userId) {
         List<Schedule> scheduleList = scheduleRepository.findByUserId(userId);
-        return listScheduleProcessing(aes256.decryptScheduleListCopy(scheduleList));
+        return getEncodedScheduleList(listScheduleProcessing(aes256.decryptScheduleListCopy(scheduleList)));
     }
 
     @Override
-    public List<ScheduleServiceModel> getById(Integer id) {
+    public List<Schedule> getById(Integer id) {
         Schedule schedule = scheduleRepository.findById(id).get();
-        return changeModeProcessing(aes256.decryptScheduleCopy(schedule));
+        return getEncodedScheduleList(changeModeProcessing(aes256.decryptScheduleCopy(schedule)));
     }
 
     @Override
-    public List<ScheduleServiceModel> create(String startTime, String endTime, String date, Long duration, Integer userId, Integer mode) {
+    public List<Schedule> create(String startTime, String endTime, String date, Long duration, Integer userId, Integer mode) {
         Schedule schedule = new Schedule(startTime, endTime, date, duration, userId, new Timestamp(System.currentTimeMillis()), null, mode);
         scheduleRepository.save(aes256.encryptScheduleCopy(schedule));
         return changeModeProcessing(schedule);
     }
 
     @Override
-    public List<ScheduleServiceModel> update(Integer id, String startTime, String endTime, String date, Long duration, Integer mode) {
+    public List<Schedule> update(Integer id, String startTime, String endTime, String date, Long duration, Integer mode) {
         Schedule schedule = aes256.decryptSchedule(scheduleRepository.findById(id).get());
         schedule.setStartTime(startTime);
         schedule.setEndTime(endTime);
@@ -69,16 +75,16 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleServiceModel> getCurrentByUser(Integer userId) {
+    public List<Schedule> getCurrentByUser(Integer userId) {
         java.util.Date dateNow = new java.util.Date();
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd");
         List<Schedule> schedules = scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDateNow.format(dateNow)), userId);
-        if(schedules == null || schedules.size() == 0){
+        if (schedules == null || schedules.size() == 0) {
             dateNow.setTime(dateNow.getTime() - Constants.COUNT_MS_ON_DAY);
             schedules = scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDateNow.format(dateNow)), userId);
         }
 
-        return listScheduleProcessing(aes256.decryptScheduleListCopy(schedules));
+        return getEncodedScheduleList(listScheduleProcessing(aes256.decryptScheduleListCopy(schedules)));
 
     }
 
@@ -88,18 +94,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
 
-    private List<ScheduleServiceModel> changeModeProcessing(Schedule schedule) {
+    private List<Schedule> changeModeProcessing(Schedule schedule) {
         if (schedule.getMode() == Constants.UNIFORM_DISTRIBUTION)
-            return uniformMethodScheduleProcessing(schedule);
+            return getEncodedScheduleList(uniformMethodScheduleProcessing(schedule));
         if (schedule.getMode() == Constants.BOUNDARY_DISTRIBUTION)
-            return boundaryMethodScheduleProcessing(schedule);
+            return getEncodedScheduleList(boundaryMethodScheduleProcessing(schedule));
         return null;
 
     }
 
 
-    private List<ScheduleServiceModel> listScheduleProcessing(List<Schedule> scheduleList) {
-        List<ScheduleServiceModel> processedScheduleList = new ArrayList<>();
+    private List<Schedule> listScheduleProcessing(List<Schedule> scheduleList) {
+        List<Schedule> processedScheduleList = new ArrayList<>();
         for (Schedule schedule : scheduleList)
             processedScheduleList.addAll(Objects.requireNonNull(changeModeProcessing(schedule)));
 
@@ -107,7 +113,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     }
 
-    private List<ScheduleServiceModel> uniformMethodScheduleProcessing(Schedule responseSchedule) {
+    private List<Schedule> uniformMethodScheduleProcessing(Schedule responseSchedule) {
         ScheduleServiceModel schedule = new ScheduleServiceModel(responseSchedule);
         long fullWorkingTime = Math.abs(schedule.getEndTime().getTime() - schedule.getStartTime().getTime()) / 60000;
         long countOnDay = getTimeWithNetwork(fullWorkingTime);
@@ -116,11 +122,11 @@ public class ScheduleServiceImpl implements ScheduleService {
             minDuration++;
         long countOfPeriod = countOnDay / minDuration;
         long periodDuration = fullWorkingTime * 60000 / countOfPeriod;
-        List<ScheduleServiceModel> scheduleList = new ArrayList<>();
+        List<Schedule> scheduleList = new ArrayList<>();
 
         Time startTime = schedule.getStartTime();
         for (int i = 0; i < countOfPeriod; i++) {
-            scheduleList.add(new ScheduleServiceModel(schedule.getId(), new Time(startTime.getTime()), new Time(startTime.getTime() + periodDuration), schedule.getDate(), minDuration));
+            scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(), new Time(startTime.getTime() + periodDuration).toString(), schedule.getDate().toString(), minDuration));
             startTime.setTime(startTime.getTime() + periodDuration);
         }
 
@@ -128,7 +134,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     }
 
-    private List<ScheduleServiceModel> boundaryMethodScheduleProcessing(Schedule responseSchedule) {
+    private List<Schedule> boundaryMethodScheduleProcessing(Schedule responseSchedule) {
         ScheduleServiceModel schedule = new ScheduleServiceModel(responseSchedule);
         long fullWorkingTime = Math.abs(schedule.getEndTime().getTime() - schedule.getStartTime().getTime()) / 60000;
         long countOnDay = getTimeWithNetwork(fullWorkingTime);
@@ -137,21 +143,54 @@ public class ScheduleServiceImpl implements ScheduleService {
             minDuration++;
         long countOfPeriod = (countOnDay / minDuration) * 2;
         long periodDuration = fullWorkingTime * 60000 / countOfPeriod;
-        List<ScheduleServiceModel> scheduleList = new ArrayList<>();
+        List<Schedule> scheduleList = new ArrayList<>();
 
         Time startTime = schedule.getStartTime();
         for (int i = 0; i < countOfPeriod; i++) {
             if (i == 0 || i == countOfPeriod - 1) {
-                scheduleList.add(new ScheduleServiceModel(schedule.getId(), new Time(startTime.getTime()), new Time(startTime.getTime() + periodDuration), schedule.getDate(), minDuration * 3));
+                scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(), new Time(startTime.getTime() + periodDuration).toString(), schedule.getDate().toString(), minDuration * 3));
                 startTime.setTime(startTime.getTime() + periodDuration * 3);
                 continue;
             }
-            scheduleList.add(new ScheduleServiceModel(schedule.getId(), new Time(startTime.getTime()), new Time(startTime.getTime() + periodDuration), schedule.getDate(), minDuration));
+            scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(), new Time(startTime.getTime() + periodDuration).toString(), schedule.getDate().toString(), minDuration));
             startTime.setTime(startTime.getTime() + periodDuration);
         }
 
         return scheduleList;
 
+    }
+
+    private List<Schedule> getEncodedScheduleList(List<Schedule> scheduleList) {
+        List<Schedule> encodedScheduleList = new ArrayList<>();
+        for (Schedule schedule : scheduleList) {
+            encodedScheduleList.add(getEncodedSchedule(schedule));
+        }
+        return encodedScheduleList;
+
+    }
+
+    private Schedule getEncodedSchedule(Schedule scheduleServiceModel) {
+        Schedule encodedSchedule = scheduleServiceModel.clone();
+        encodedSchedule.setStartTime(encoder.encodeToString(encodedSchedule.getStartTime().getBytes(StandardCharsets.UTF_8)));
+        encodedSchedule.setEndTime(encoder.encodeToString(encodedSchedule.getEndTime().getBytes(StandardCharsets.UTF_8)));
+        encodedSchedule.setDate(encoder.encodeToString(encodedSchedule.getDate().getBytes(StandardCharsets.UTF_8)));
+        return encodedSchedule;
+    }
+
+//    private List<Schedule> getDecodedScheduleList(List<Schedule> scheduleList) {
+//        List<Schedule> decodedScheduleList = new ArrayList<>();
+//        for (Schedule schedule : scheduleList) {
+//            decodedScheduleList.add(getDecodedSchedule(schedule));
+//        }
+//        return decodedScheduleList;
+//
+//    }
+    @Override
+    public ScheduleDto getDecodedScheduleDto(ScheduleDto schedule) {
+        schedule.setStartTime(new String(decoder.decode(schedule.getStartTime().getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+        schedule.setEndTime(new String(decoder.decode(schedule.getEndTime().getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+        schedule.setDate(new String(decoder.decode(schedule.getDate().getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+        return schedule;
     }
 
 
