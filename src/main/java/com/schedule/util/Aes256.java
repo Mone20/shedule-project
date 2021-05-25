@@ -94,6 +94,7 @@ public class Aes256 {
 
     public Schedule encryptScheduleCopy(Schedule originalSchedule) {
         Schedule schedule = originalSchedule.clone();
+        schedule.setId(originalSchedule.getId());
         return encryptSchedule(schedule);
     }
 
@@ -106,6 +107,7 @@ public class Aes256 {
 
     public Schedule decryptScheduleCopy(Schedule originalSchedule) {
         Schedule schedule = originalSchedule.clone();
+        schedule.setId(originalSchedule.getId());
         return decryptSchedule(schedule);
     }
 

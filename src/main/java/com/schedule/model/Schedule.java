@@ -1,5 +1,6 @@
 package com.schedule.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.springframework.context.annotation.Lazy;
@@ -30,7 +31,8 @@ public class Schedule {
     private Timestamp created;
     private Timestamp modified;
 
-    public Schedule(String startTime,
+    public Schedule( Integer id,
+            String startTime,
                     String endTime,
                     String date,
                     Long duration,
@@ -38,6 +40,7 @@ public class Schedule {
                     Timestamp created,
                     Timestamp modified,
                     Integer mode) {
+        this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.date = date;
@@ -146,7 +149,8 @@ public class Schedule {
 
     @Override
     public Schedule clone() {
-        return new Schedule(this.startTime,
+        return new Schedule(this.id,
+                this.startTime,
                 this.endTime,
                 this.date,
                 this.duration,

@@ -49,6 +49,7 @@ public class ScheduleServiceModel {
         this.mode = mode;
     }
     public ScheduleServiceModel(Schedule schedule) {
+        this.id = schedule.getId();
         this.startTime = Time.valueOf(schedule.getStartTime());
         this.endTime = Time.valueOf(schedule.getEndTime());
         this.date = Date.valueOf(schedule.getDate());
@@ -59,7 +60,7 @@ public class ScheduleServiceModel {
         this.mode = schedule.getMode();
     }
 
-
+    @JsonView(Views.Public.class)
     public Integer getId() {
         return id;
     }

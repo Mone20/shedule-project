@@ -59,8 +59,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         List<Schedule> schedules = scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDate.format(Date.valueOf(date))), userId);
         if(schedules != null && !schedules.isEmpty())
             return null;
-        Schedule schedule = new Schedule(startTime, endTime, date, duration, userId, new Timestamp(System.currentTimeMillis()), null, mode);
-        scheduleRepository.save(aes256.encryptScheduleCopy(schedule));
+        Schedule schedule = new Schedule(null,startTime, endTime, date, duration, userId, new Timestamp(System.currentTimeMillis()), null, mode);
+        schedule = aes256.decryptSchedule(scheduleRepository.save(aes256.encryptScheduleCopy(schedule)));
         return changeModeProcessing(schedule);
     }
 
@@ -195,6 +195,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private Schedule getEncodedSchedule(Schedule scheduleServiceModel) {
         Schedule encodedSchedule = scheduleServiceModel.clone();
+        encodedSchedule.setId(scheduleServiceModel.getId());
         encodedSchedule.setStartTime(encoder.encodeToString(encodedSchedule.getStartTime().getBytes(StandardCharsets.UTF_8)));
         encodedSchedule.setEndTime(encoder.encodeToString(encodedSchedule.getEndTime().getBytes(StandardCharsets.UTF_8)));
         encodedSchedule.setDate(encoder.encodeToString(encodedSchedule.getDate().getBytes(StandardCharsets.UTF_8)));
