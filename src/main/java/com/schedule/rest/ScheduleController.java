@@ -21,7 +21,7 @@ public class ScheduleController {
     UserService userService;
 
     @GetMapping("/all")
-    @JsonView(Views.Private.class)
+    @JsonView(Views.Public.class)
     public List<Schedule> getAll(@RequestHeader("authorization") String header) {
         if(userService.authorization(header).equals(Constants.ROLES.ADMIN))
         return scheduleService.getAll();

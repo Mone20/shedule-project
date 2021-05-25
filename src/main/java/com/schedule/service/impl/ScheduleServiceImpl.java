@@ -7,7 +7,6 @@ import com.schedule.repository.ScheduleRepository;
 import com.schedule.rest.dto.ScheduleDto;
 import com.schedule.service.ScheduleService;
 import com.schedule.util.Aes256;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
