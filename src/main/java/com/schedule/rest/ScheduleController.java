@@ -48,13 +48,20 @@ public class ScheduleController {
     public List<Schedule> updateSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header, @PathVariable String id) {
         body = scheduleService.getDecodedScheduleDto(body);
         String role = userService.authorization(header);
-        if(role.equals(Constants.ROLES.ADMIN) || role.equals(Constants.ROLES.USER))
+        if(role.equals(Constants.ROLES.ADMIN))
         return scheduleService.update(Integer.parseInt(id),
                 body.getStartTime(),
                 body.getEndTime(),
                 body.getDate(),
                 body.getDuration(),
                 body.getMode());
+        else if(role.equals(Constants.ROLES.USER))
+            return scheduleService.updateFromUser(Integer.parseInt(id),
+                    body.getStartTime(),
+                    body.getEndTime(),
+                    body.getDate(),
+                    body.getDuration(),
+                    body.getMode());
         return null;
     }
     @GetMapping("/{userId}")
@@ -77,8 +84,10 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     public  void delete(@PathVariable String id, @RequestHeader("authorization") String header){
         String role = userService.authorization(header);
-        if(role.equals(Constants.ROLES.ADMIN) || role.equals(Constants.ROLES.USER))
+        if(role.equals(Constants.ROLES.ADMIN))
         scheduleService.delete(Integer.parseInt(id));
+        else if(role.equals(Constants.ROLES.USER))
+            scheduleService.deleteFromUser(Integer.parseInt(id));
 
     }
 }

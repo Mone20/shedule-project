@@ -6,7 +6,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 
 public class ScheduleServiceModel {
-    @JsonView(Views.Private.class)
+    @JsonView(Views.Public.class)
     private Integer id;
     @JsonView(Views.Public.class)
     private Time startTime;

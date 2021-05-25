@@ -15,6 +15,9 @@ public interface ScheduleService {
 
     List<Schedule> getByUser(Integer userId);
 
+    List<Schedule> updateFromUser(Integer id, String startTime, String endTime, String date, Long duration, Integer mode);
+
+
     List<Schedule> getCurrentByUser(Integer userId);
 
     List<Schedule> getById(Integer id);
@@ -34,13 +37,7 @@ public interface ScheduleService {
 
     void delete(Integer id);
 
-    //    private List<Schedule> getDecodedScheduleList(List<Schedule> scheduleList) {
-    //        List<Schedule> decodedScheduleList = new ArrayList<>();
-    //        for (Schedule schedule : scheduleList) {
-    //            decodedScheduleList.add(getDecodedSchedule(schedule));
-    //        }
-    //        return decodedScheduleList;
-    //
-    //    }
+    void deleteFromUser(Integer id);
+
     ScheduleDto getDecodedScheduleDto(ScheduleDto schedule);
 }

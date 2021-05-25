@@ -5,8 +5,6 @@ import lombok.Data;
 import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 
 @Lazy

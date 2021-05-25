@@ -44,7 +44,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<Schedule> getByUser(Integer userId) {
         List<Schedule> scheduleList = scheduleRepository.findByUserId(userId);
-        return getEncodedScheduleList(listScheduleProcessing(aes256.decryptScheduleListCopy(scheduleList)));
+        return aes256.decryptScheduleListCopy(scheduleList);
     }
 
     @Override
@@ -65,14 +65,20 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Schedule> update(Integer id, String startTime, String endTime, String date, Long duration, Integer mode) {
-        Schedule schedule = aes256.decryptSchedule(scheduleRepository.findById(id).get());
+    public List<Schedule> updateFromUser(Integer id, String startTime, String endTime, String date, Long duration, Integer mode) {
+        Schedule schedule = aes256.decryptScheduleCopy(scheduleRepository.findById(id).get());
         java.util.Date dateNow = new java.util.Date();
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd");
-        List<Schedule> schedules =  scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDateNow.format(dateNow)), schedule.getUserId());
+        List<Schedule> schedules =  aes256.decryptScheduleList(scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDateNow.format(dateNow)), schedule.getUserId()));
         if(schedules != null && !schedules.isEmpty())
             return changeModeProcessing(schedules.get(0));
 
+        return update(id, startTime, endTime,  date, duration,  mode);
+    }
+
+    @Override
+    public List<Schedule> update(Integer id, String startTime, String endTime, String date, Long duration, Integer mode){
+        Schedule schedule = aes256.decryptScheduleCopy(scheduleRepository.findById(id).get());
         schedule.setStartTime(startTime);
         schedule.setEndTime(endTime);
         schedule.setDate(date);
@@ -98,6 +104,14 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     }
 
+    @Override
+    public void deleteFromUser(Integer id) {
+        java.util.Date dateNow = new java.util.Date();
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd");
+        Schedule schedule = aes256.decryptScheduleCopy(scheduleRepository.findById(id).get());
+        if(!schedule.getDate().equals(formatForDateNow.format(dateNow)))
+            delete(id);
+    }
     @Override
     public void delete(Integer id) {
         scheduleRepository.deleteById(id);
