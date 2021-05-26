@@ -48,9 +48,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Schedule> getById(Integer id) {
+    public Schedule getById(Integer id) {
         Schedule schedule = scheduleRepository.findById(id).get();
-        return getEncodedScheduleList(changeModeProcessing(aes256.decryptScheduleCopy(schedule)));
+        return getEncodedSchedule(aes256.decryptScheduleCopy(schedule));
     }
 
     @Override

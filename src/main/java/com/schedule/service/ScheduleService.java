@@ -20,7 +20,7 @@ public interface ScheduleService {
 
     List<Schedule> getCurrentByUser(Integer userId);
 
-    List<Schedule> getById(Integer id);
+   Schedule getById(Integer id);
 
     List<Schedule> create(String startTime,
                           String endTime,

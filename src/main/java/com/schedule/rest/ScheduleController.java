@@ -57,7 +57,7 @@ public class ScheduleController {
                 body.getDuration(),
                 body.getMode());
         else if(user.getRole().getName().equals(Constants.ROLES.USER)
-                && scheduleService.getById(Integer.parseInt(id)).get(0).getUserId().equals(user.getId()))
+                && scheduleService.getById(Integer.parseInt(id)).getUserId().equals(user.getId()))
             return scheduleService.updateFromUser(Integer.parseInt(id),
                     body.getStartTime(),
                     body.getEndTime(),
@@ -66,7 +66,7 @@ public class ScheduleController {
                     body.getMode());
         return null;
     }
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     @JsonView(Views.Public.class)
     public List<Schedule> getByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
         ScheduleUser user  = userService.authorization(header);
@@ -74,6 +74,18 @@ public class ScheduleController {
         return scheduleService.getByUser(Integer.parseInt(userId));
         return null;
     }
+
+    @GetMapping("/{scheduleId}")
+    @JsonView(Views.Private.class)
+    public Schedule getById(@PathVariable String scheduleId, @RequestHeader("authorization") String header) {
+        ScheduleUser user  = userService.authorization(header);
+        if(user.getRole().getName().equals(Constants.ROLES.ADMIN) || (user.getRole().getName().equals(Constants.ROLES.USER)
+                && scheduleService.getById(Integer.parseInt(scheduleId)).getUserId().equals(user.getId())))
+             return scheduleService.getById(Integer.parseInt(scheduleId));
+
+        return null;
+    }
+
     @GetMapping("/current/{userId}")
     @JsonView(Views.Public.class)
     public List<Schedule> getCurrentByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
@@ -89,7 +101,7 @@ public class ScheduleController {
         if(user.getRole().getName().equals(Constants.ROLES.ADMIN))
         scheduleService.delete(Integer.parseInt(id));
         else if(user.getRole().getName().equals(Constants.ROLES.USER)
-                && scheduleService.getById(Integer.parseInt(id)).get(0).getUserId().equals(user.getId()))
+                && scheduleService.getById(Integer.parseInt(id)).getUserId().equals(user.getId()))
             scheduleService.deleteFromUser(Integer.parseInt(id));
 
     }
