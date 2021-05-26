@@ -54,12 +54,14 @@ public class Schedule {
                                 String startTime,
                                String endTime,
                                String date,
-                                Long duration) {
+                                Long duration,
+                      Integer userId) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.date = date;
         this.duration = duration;
+        this.userId = userId;
     }
     public Schedule() {
     }

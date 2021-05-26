@@ -108,6 +108,7 @@ public class Aes256 {
     public Schedule decryptScheduleCopy(Schedule originalSchedule) {
         Schedule schedule = originalSchedule.clone();
         schedule.setId(originalSchedule.getId());
+        schedule.setUserId(originalSchedule.getUserId());
         return decryptSchedule(schedule);
     }
 

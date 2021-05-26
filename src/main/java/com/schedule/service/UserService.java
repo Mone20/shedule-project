@@ -16,5 +16,5 @@ public interface UserService {
 
     ScheduleUser getByLoginAndPassword(String header);
 
-    String authorization(String header);
+    ScheduleUser authorization(String header);
 }

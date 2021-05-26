@@ -1,6 +1,7 @@
 package com.schedule.service.impl;
 
 
+import com.schedule.model.Schedule;
 import com.schedule.model.ScheduleUser;
 import com.schedule.repository.RoleRepository;
 import com.schedule.repository.UserRepository;
@@ -54,20 +55,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ScheduleUser getByLoginAndPassword(String header) {
-        if(authorization(header).length() > 0)
+        if(!authorization(header).getRole().getName().isEmpty())
             return userRepository.findByLogin(getLoginAndPasswordFromHeader(header).getKey());
         return null;
     }
 
     @Override
-    public String authorization(String header){
+    public ScheduleUser authorization(String header){
         Pair<String,String> loginPassword = getLoginAndPasswordFromHeader(header);
         if(!userRepository.existsByLogin(loginPassword.getKey()))
-            return "";
+            return null;
         ScheduleUser user = userRepository.findByLogin(loginPassword.getKey());
         if (BCrypt.checkpw(loginPassword.getValue(), user.getPassword()))
-            return user.getRole().getName();
-        return "";
+            return user;
+        return null;
     }
 
     public Pair<String,String> getLoginAndPasswordFromHeader(String header){

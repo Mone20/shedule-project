@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping("/all")
     @JsonView(Views.Private.class)
     public List<ScheduleUser> getAllUsers(@RequestHeader("authorization") String header) {
-        if(userService.authorization(header).equals(Constants.ROLES.ADMIN))
+        if(userService.authorization(header).getRole().getName().equals(Constants.ROLES.ADMIN))
         return userService.getAll();
         return null;
     }

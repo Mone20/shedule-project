@@ -150,7 +150,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         Time startTime = schedule.getStartTime();
         for (int i = 0; i < countOfPeriod; i++) {
-            scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(), new Time(startTime.getTime() + periodDuration).toString(), schedule.getDate().toString(), minDuration));
+            scheduleList.add(new Schedule(schedule.getId(),
+                    new Time(startTime.getTime()).toString(),
+                    new Time(startTime.getTime() + periodDuration).toString(),
+                    schedule.getDate().toString(), minDuration, schedule.getUserId()));
             startTime.setTime(startTime.getTime() + periodDuration);
         }
 
@@ -172,11 +175,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         Time startTime = schedule.getStartTime();
         for (int i = 0; i < countOfPeriod; i++) {
             if (i == 0 || i == countOfPeriod - 1) {
-                scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(), new Time(startTime.getTime() + periodDuration).toString(), schedule.getDate().toString(), minDuration * 3));
+                scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(),
+                        new Time(startTime.getTime() + periodDuration).toString(), schedule.getDate().toString(), minDuration * 3, schedule.getUserId()));
                 startTime.setTime(startTime.getTime() + periodDuration * 3);
                 continue;
             }
-            scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(), new Time(startTime.getTime() + periodDuration).toString(), schedule.getDate().toString(), minDuration));
+            scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(),
+                    new Time(startTime.getTime() + periodDuration).toString(), schedule.getDate().toString(), minDuration, schedule.getUserId()));
             startTime.setTime(startTime.getTime() + periodDuration);
         }
 
@@ -196,6 +201,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private Schedule getEncodedSchedule(Schedule scheduleServiceModel) {
         Schedule encodedSchedule = scheduleServiceModel.clone();
         encodedSchedule.setId(scheduleServiceModel.getId());
+        encodedSchedule.setUserId(scheduleServiceModel.getUserId());
         encodedSchedule.setStartTime(encoder.encodeToString(encodedSchedule.getStartTime().getBytes(StandardCharsets.UTF_8)));
         encodedSchedule.setEndTime(encoder.encodeToString(encodedSchedule.getEndTime().getBytes(StandardCharsets.UTF_8)));
         encodedSchedule.setDate(encoder.encodeToString(encodedSchedule.getDate().getBytes(StandardCharsets.UTF_8)));
