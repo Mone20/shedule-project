@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -48,25 +50,30 @@ public class ScheduleController {
 
     @PutMapping("/{id}")
     @JsonView(Views.Public.class)
-    public List<Schedule> updateSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header, @PathVariable String id) {
+    public ResponseEntity<List<Schedule>> updateSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header, @PathVariable String id) {
         body = scheduleService.getDecodedScheduleDto(body);
         ScheduleUser user  = userService.authorization(header);
         if(user.getRole().getName().equals(Constants.ROLES.ADMIN))
-        return scheduleService.update(Integer.parseInt(id),
+        return new ResponseEntity(scheduleService.update(Integer.parseInt(id),
                 body.getStartTime(),
                 body.getEndTime(),
                 body.getDate(),
                 body.getDuration(),
-                body.getMode());
+                body.getMode()),HttpStatus.OK);
         else if(user.getRole().getName().equals(Constants.ROLES.USER)
-                && scheduleService.getById(Integer.parseInt(id)).getUserId().equals(user.getId()))
-            return scheduleService.updateFromUser(Integer.parseInt(id),
+                && scheduleService.getById(Integer.parseInt(id)).getUserId().equals(user.getId())) {
+            List<Schedule> updatedList = scheduleService.updateFromUser(Integer.parseInt(id),
                     body.getStartTime(),
                     body.getEndTime(),
                     body.getDate(),
                     body.getDuration(),
-                    body.getMode());
-        return null;
+            body.getMode());
+            if(updatedList.isEmpty())
+            return new ResponseEntity(updatedList,HttpStatus.INTERNAL_SERVER_ERROR);
+            else
+                return new ResponseEntity(updatedList,HttpStatus.OK);
+        }
+        return new ResponseEntity(Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @GetMapping("/user/{userId}")
     @JsonView(Views.Public.class)

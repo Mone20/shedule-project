@@ -15,10 +15,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -71,7 +68,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd");
         List<Schedule> schedules =  aes256.decryptScheduleList(scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDateNow.format(dateNow)), schedule.getUserId()));
         if(schedules != null && !schedules.isEmpty())
-            return changeModeProcessing(schedules.get(0));
+            return Collections.emptyList();
 
         return update(id, startTime, endTime,  date, duration,  mode);
     }
