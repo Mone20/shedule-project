@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class ScheduleController {
     ScheduleService scheduleService;
     @Autowired
     UserService userService;
-
+    //API для получения всех расписаний
     @GetMapping("/all")
     @JsonView(Views.Private.class)
     public List<Schedule> getAll(@RequestHeader("authorization") String header) {
@@ -32,7 +31,7 @@ public class ScheduleController {
         return scheduleService.getAll();
         return null;
     }
-
+    //API для создания расписания
     @PostMapping()
     @JsonView(Views.Public.class)
     public List<Schedule> createSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header) {
@@ -47,7 +46,7 @@ public class ScheduleController {
                 body.getMode());
         return null;
     }
-
+    //API для редактирования расписания по id
     @PutMapping("/{id}")
     @JsonView(Views.Public.class)
     public ResponseEntity<List<Schedule>> updateSchedule(@RequestBody ScheduleDto body, @RequestHeader("authorization") String header, @PathVariable String id) {
@@ -75,6 +74,7 @@ public class ScheduleController {
         }
         return new ResponseEntity(Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    //API для получения расписания по userId
     @GetMapping("/user/{userId}")
     @JsonView(Views.Public.class)
     public List<Schedule> getByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
@@ -83,7 +83,7 @@ public class ScheduleController {
         return scheduleService.getByUser(Integer.parseInt(userId));
         return null;
     }
-
+    //API для получения расписания по id
     @GetMapping("/{scheduleId}")
     @JsonView(Views.Private.class)
     public Schedule getById(@PathVariable String scheduleId, @RequestHeader("authorization") String header) {
@@ -94,7 +94,7 @@ public class ScheduleController {
 
         return null;
     }
-
+    //API для получения расписания текущего дня для пользователя с userId
     @GetMapping("/current/{userId}")
     @JsonView(Views.Public.class)
     public List<Schedule> getCurrentByUser(@PathVariable String userId, @RequestHeader("authorization") String header) {
@@ -104,6 +104,7 @@ public class ScheduleController {
         return null;
     }
 
+    //API для удаления расписания по ID
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable String id, @RequestHeader("authorization") String header){
         ScheduleUser user  = userService.authorization(header);

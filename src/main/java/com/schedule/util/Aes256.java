@@ -25,8 +25,8 @@ public class Aes256 {
             secretKey = null;
         }
     }
-    
 
+    //Метод для перешифрования всхе записей в таблице расписаний
     public List<Schedule> encryptAllRecordWithNewKey(List<Schedule> allSchedules) {
         List<Schedule> decryptedScheduleList = null;
         try {
@@ -46,7 +46,7 @@ public class Aes256 {
         else
         return encryptScheduleList(decryptedScheduleList);
     }
-
+    //Метод для генерации ключа размером 256 бит
     public SecretKey keyGeneration() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         SecureRandom secureRandom = new SecureRandom();
@@ -54,7 +54,7 @@ public class Aes256 {
         keyGenerator.init(keyBitSize, secureRandom);
         return keyGenerator.generateKey();
     }
-
+    //Метод для шифрования поля
     public String encrypt(final String data) {
 
 
@@ -72,7 +72,7 @@ public class Aes256 {
         }
 
     }
-
+    //Метод для дешифрования поля
     public String decrypt(
             final String encryptedString) {
 
@@ -91,44 +91,44 @@ public class Aes256 {
         }
     }
 
-
+    //Метод для шифрования копии расписания
     public Schedule encryptScheduleCopy(Schedule originalSchedule) {
         Schedule schedule = originalSchedule.clone();
         schedule.setId(originalSchedule.getId());
         return encryptSchedule(schedule);
     }
-
+    //Метод для шифрования расписания
     public Schedule encryptSchedule(Schedule schedule) {
         schedule.setStartTime(encrypt(schedule.getStartTime()));
         schedule.setEndTime(encrypt(schedule.getEndTime()));
         schedule.setDate(encrypt(schedule.getDate()));
         return schedule;
     }
-
+    //Метод для дешифрования копии расписания
     public Schedule decryptScheduleCopy(Schedule originalSchedule) {
         Schedule schedule = originalSchedule.clone();
         schedule.setId(originalSchedule.getId());
         schedule.setUserId(originalSchedule.getUserId());
         return decryptSchedule(schedule);
     }
-
+    //Метод для дешифрования расписания
     public Schedule decryptSchedule(Schedule schedule) {
         schedule.setStartTime(decrypt(schedule.getStartTime()));
         schedule.setEndTime(decrypt(schedule.getEndTime()));
         schedule.setDate(decrypt(schedule.getDate()));
         return schedule;
     }
-
+    //Метод для дешифрования копии коллекции расписаний
     public List<Schedule> decryptScheduleListCopy(List<Schedule> scheduleList) {
         return scheduleList.stream().map(this::decryptScheduleCopy).collect(Collectors.toList());
     }
-
+    //Метод для дешифрования коллекции расписаний
     public List<Schedule> decryptScheduleList(List<Schedule> scheduleList) {
         scheduleList.forEach(this::decryptSchedule);
         return scheduleList;
     }
 
-
+    //Метод для шифрования коллекции расписаний
     private List<Schedule> encryptScheduleList(List<Schedule> scheduleList) {
         scheduleList.forEach(this::encryptSchedule);
         return scheduleList;

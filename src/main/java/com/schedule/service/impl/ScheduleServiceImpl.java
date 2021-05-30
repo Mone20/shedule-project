@@ -27,29 +27,29 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ScheduleServiceImpl(ScheduleRepository scheduleRepository) {
         this.scheduleRepository = scheduleRepository;
     }
-
+    //Метод для перешифрования всх записей в таблице расписаний при перезапуске сервера
     @Override
     public void encryptAllSchedulesWithNewKey() {
         aes256.encryptAllRecordWithNewKey((List<Schedule>) scheduleRepository.findAll()).forEach(scheduleRepository::save);
     }
-
+    //Метод для получения всех расписаний из БД
     @Override
     public List<Schedule> getAll() {
         return getEncodedScheduleList(aes256.decryptScheduleListCopy((List<Schedule>) scheduleRepository.findAll()));
     }
-
+    //Метод для получения расписания по userId
     @Override
     public List<Schedule> getByUser(Integer userId) {
         List<Schedule> scheduleList = scheduleRepository.findByUserId(userId);
         return aes256.decryptScheduleListCopy(scheduleList);
     }
-
+    //Метод для получения расписания по id
     @Override
     public Schedule getById(Integer id) {
         Schedule schedule = scheduleRepository.findById(id).get();
         return getEncodedSchedule(aes256.decryptScheduleCopy(schedule));
     }
-
+    //Метод для создания расписания
     @Override
     public List<Schedule> create(String startTime, String endTime, String date, Long duration, Integer userId, Integer mode) {
         SimpleDateFormat formatForDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -60,7 +60,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule = aes256.decryptSchedule(scheduleRepository.save(aes256.encryptScheduleCopy(schedule)));
         return changeModeProcessing(schedule);
     }
-
+    //Метод для редактирования расписания для роли user
     @Override
     public List<Schedule> updateFromUser(Integer id, String startTime, String endTime, String date, Long duration, Integer mode) {
         Schedule schedule = aes256.decryptScheduleCopy(scheduleRepository.findById(id).get());
@@ -72,7 +72,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return update(id, startTime, endTime,  date, duration,  mode);
     }
-
+    //Метод для редактирования расписания для роли admin
     @Override
     public List<Schedule> update(Integer id, String startTime, String endTime, String date, Long duration, Integer mode){
         Schedule schedule = aes256.decryptScheduleCopy(scheduleRepository.findById(id).get());
@@ -86,7 +86,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleRepository.save(aes256.encryptSchedule(schedule));
         return changeModeProcessing(scheduleCopy);
     }
-
+    //Метод для получения расписанияя текущего дня для пользователя с userId
     @Override
     public List<Schedule> getCurrentByUser(Integer userId) {
         java.util.Date dateNow = new java.util.Date();
@@ -100,7 +100,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return listScheduleProcessing(aes256.decryptScheduleListCopy(schedules));
 
     }
-
+    //Метод для удаления расписания для пользователя с роль user
     @Override
     public boolean deleteFromUser(Integer id) {
         java.util.Date dateNow = new java.util.Date();
@@ -112,12 +112,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
         return false;
     }
+    //Метод для удаления расписания для пользователя с роль admin
     @Override
     public void delete(Integer id) {
         scheduleRepository.deleteById(id);
     }
 
-
+    //Метод для вызова обработки расписания исходя из выбранного режима обработки
     private List<Schedule> changeModeProcessing(Schedule schedule) {
         if (schedule.getMode() == Constants.UNIFORM_DISTRIBUTION)
             return getEncodedScheduleList(uniformMethodScheduleProcessing(schedule));
@@ -127,7 +128,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     }
 
-
+    //Метод для обработки коллекции расписаний
     private List<Schedule> listScheduleProcessing(List<Schedule> scheduleList) {
         List<Schedule> processedScheduleList = new ArrayList<>();
         for (Schedule schedule : scheduleList)
@@ -136,7 +137,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return processedScheduleList;
 
     }
-
+    //Метод для равномерной обработки расписания
     private List<Schedule> uniformMethodScheduleProcessing(Schedule responseSchedule) {
         ScheduleServiceModel schedule = new ScheduleServiceModel(responseSchedule);
         long fullWorkingTime = Math.abs(schedule.getEndTime().getTime() - schedule.getStartTime().getTime()) / 60000;
@@ -160,7 +161,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleList;
 
     }
-
+    //Метод для пограничной обработки расписания
     private List<Schedule> boundaryMethodScheduleProcessing(Schedule responseSchedule) {
         ScheduleServiceModel schedule = new ScheduleServiceModel(responseSchedule);
         long fullWorkingTime = Math.abs(schedule.getEndTime().getTime() - schedule.getStartTime().getTime()) / 60000;
@@ -188,7 +189,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleList;
 
     }
-
+    //Метод для кодирования коллекции расписаний
     private List<Schedule> getEncodedScheduleList(List<Schedule> scheduleList) {
         List<Schedule> encodedScheduleList = new ArrayList<>();
         for (Schedule schedule : scheduleList) {
@@ -197,7 +198,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return encodedScheduleList;
 
     }
-
+    //Метод для кодирования расписания
     private Schedule getEncodedSchedule(Schedule scheduleServiceModel) {
         Schedule encodedSchedule = scheduleServiceModel.clone();
         encodedSchedule.setId(scheduleServiceModel.getId());
@@ -207,7 +208,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         encodedSchedule.setDate(encoder.encodeToString(encodedSchedule.getDate().getBytes(StandardCharsets.UTF_8)));
         return encodedSchedule;
     }
-
+    //Метод для кодирования DTO расписания
     @Override
     public ScheduleDto getDecodedScheduleDto(ScheduleDto schedule) {
         schedule.setStartTime(new String(decoder.decode(schedule.getStartTime().getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
@@ -216,7 +217,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return schedule;
     }
 
-
+    //Метод для получения разрешенного времени работы в интернете
     private long getTimeWithNetwork(long time) {
         return (long) (time * Constants.DUTY_FACTOR);
     }

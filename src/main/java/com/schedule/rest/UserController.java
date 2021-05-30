@@ -16,19 +16,19 @@ public class UserController {
 
     @Autowired
     UserService userService;
-
+    //API для регистрации пользователя
     @GetMapping()
     @JsonView(Views.Public.class)
     public ScheduleUser createUser(@RequestHeader("authorization") String header) {
         return userService.create(header);
     }
-
+    //API для прохождения авторизации
     @GetMapping("/get")
     @JsonView(Views.Public.class)
     public ScheduleUser getUser(@RequestHeader("authorization") String header) {
         return userService.getByLoginAndPassword(header);
     }
-
+    //API для получения всех пользователей
     @GetMapping("/all")
     @JsonView(Views.Private.class)
     public List<ScheduleUser> getAllUsers(@RequestHeader("authorization") String header) {

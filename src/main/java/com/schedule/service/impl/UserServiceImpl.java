@@ -23,22 +23,22 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
     }
-
+    //Метод для получения всех пользователей системы
     @Override
     public List<ScheduleUser> getAll() {
         return (List<ScheduleUser>) userRepository.findAll();
     }
-
+    //Метод для получения пользователя по роли
     @Override
     public List<ScheduleUser> getByRole(String role) {
         return userRepository.findByRoleId(roleRepository.findByName(role).getId());
     }
-
+    //Метод для получения пользователя по id
     @Override
     public ScheduleUser getById(Integer id) {
         return null;
     }
-
+    //Метод для регистрации пользователя
     @Override
     public ScheduleUser create(String header) {
         Pair<String,String> loginPassword = getLoginAndPasswordFromHeader(header);
@@ -51,14 +51,14 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return user;
     }
-
+    //Метод для получения пользователя их заголовка Authorization
     @Override
     public ScheduleUser getByLoginAndPassword(String header) {
         if(!authorization(header).getRole().getName().isEmpty())
             return userRepository.findByLogin(getLoginAndPasswordFromHeader(header).getKey());
         return null;
     }
-
+    //Метод для авторизации пользователя
     @Override
     public ScheduleUser authorization(String header){
         Pair<String,String> loginPassword = getLoginAndPasswordFromHeader(header);
@@ -70,6 +70,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    //Метод для получения логина и пароля из заголовка Authorization
     public Pair<String,String> getLoginAndPasswordFromHeader(String header){
         header = header.replaceAll("Basic","").trim();
         byte[] decodedHeaderBytes = decoder.decode(header);
