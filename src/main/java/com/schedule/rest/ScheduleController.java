@@ -9,6 +9,8 @@ import com.schedule.rest.dto.ScheduleDto;
 import com.schedule.service.ScheduleService;
 import com.schedule.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -96,13 +98,20 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/{id}")
-    public  void delete(@PathVariable String id, @RequestHeader("authorization") String header){
+    public ResponseEntity delete(@PathVariable String id, @RequestHeader("authorization") String header){
         ScheduleUser user  = userService.authorization(header);
-        if(user.getRole().getName().equals(Constants.ROLES.ADMIN))
-        scheduleService.delete(Integer.parseInt(id));
+        if(user.getRole().getName().equals(Constants.ROLES.ADMIN)) {
+            scheduleService.delete(Integer.parseInt(id));
+            return  new ResponseEntity(HttpStatus.OK);
+        }
         else if(user.getRole().getName().equals(Constants.ROLES.USER)
-                && scheduleService.getById(Integer.parseInt(id)).getUserId().equals(user.getId()))
-            scheduleService.deleteFromUser(Integer.parseInt(id));
+                && scheduleService.getById(Integer.parseInt(id)).getUserId().equals(user.getId())) {
 
+            if(scheduleService.deleteFromUser(Integer.parseInt(id)))
+                return new ResponseEntity(HttpStatus.OK);
+            else
+                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -37,7 +37,7 @@ public interface ScheduleService {
 
     void delete(Integer id);
 
-    void deleteFromUser(Integer id);
+    boolean deleteFromUser(Integer id);
 
     ScheduleDto getDecodedScheduleDto(ScheduleDto schedule);
 }

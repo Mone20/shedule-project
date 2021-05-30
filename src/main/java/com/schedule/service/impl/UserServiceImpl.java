@@ -1,7 +1,6 @@
 package com.schedule.service.impl;
 
 
-import com.schedule.model.Schedule;
 import com.schedule.model.ScheduleUser;
 import com.schedule.repository.RoleRepository;
 import com.schedule.repository.UserRepository;

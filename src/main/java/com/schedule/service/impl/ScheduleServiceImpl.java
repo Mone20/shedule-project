@@ -100,17 +100,20 @@ public class ScheduleServiceImpl implements ScheduleService {
             schedules = scheduleRepository.findByDateAndUserId(aes256.encrypt(formatForDateNow.format(dateNow)), userId);
         }
 
-        return getEncodedScheduleList(listScheduleProcessing(aes256.decryptScheduleListCopy(schedules)));
+        return listScheduleProcessing(aes256.decryptScheduleListCopy(schedules));
 
     }
 
     @Override
-    public void deleteFromUser(Integer id) {
+    public boolean deleteFromUser(Integer id) {
         java.util.Date dateNow = new java.util.Date();
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd");
         Schedule schedule = aes256.decryptScheduleCopy(scheduleRepository.findById(id).get());
-        if(!schedule.getDate().equals(formatForDateNow.format(dateNow)))
+        if(!schedule.getDate().equals(formatForDateNow.format(dateNow))) {
             delete(id);
+            return true;
+        }
+        return false;
     }
     @Override
     public void delete(Integer id) {
@@ -208,14 +211,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         return encodedSchedule;
     }
 
-//    private List<Schedule> getDecodedScheduleList(List<Schedule> scheduleList) {
-//        List<Schedule> decodedScheduleList = new ArrayList<>();
-//        for (Schedule schedule : scheduleList) {
-//            decodedScheduleList.add(getDecodedSchedule(schedule));
-//        }
-//        return decodedScheduleList;
-//
-//    }
     @Override
     public ScheduleDto getDecodedScheduleDto(ScheduleDto schedule) {
         schedule.setStartTime(new String(decoder.decode(schedule.getStartTime().getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
