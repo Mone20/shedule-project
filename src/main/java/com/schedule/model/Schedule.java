@@ -1,8 +1,8 @@
 package com.schedule.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
@@ -30,6 +30,8 @@ public class Schedule {
     private Integer mode;
     private Timestamp created;
     private Timestamp modified;
+    @JsonView(Views.Public.class)
+    private String hashCode;
 
     public Schedule( Integer id,
             String startTime,
@@ -147,6 +149,14 @@ public class Schedule {
 
     public void setMode(Integer mode) {
         this.mode = mode;
+    }
+
+    public String getHashCode() {
+        return hashCode;
+    }
+
+    public void setHashCode() {
+        this.hashCode = DigestUtils.md5Hex(String.valueOf(id)+startTime+endTime+date+duration);
     }
 
     @Override

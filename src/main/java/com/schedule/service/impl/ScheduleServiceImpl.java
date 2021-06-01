@@ -35,13 +35,17 @@ public class ScheduleServiceImpl implements ScheduleService {
     //Метод для получения всех расписаний из БД
     @Override
     public List<Schedule> getAll() {
-        return getEncodedScheduleList(aes256.decryptScheduleListCopy((List<Schedule>) scheduleRepository.findAll()));
+        List<Schedule> scheduleList =  getEncodedScheduleList(aes256.decryptScheduleListCopy((List<Schedule>) scheduleRepository.findAll()));
+        setScheduleListHash(scheduleList);
+        return scheduleList;
     }
     //Метод для получения расписания по userId
     @Override
     public List<Schedule> getByUser(Integer userId) {
         List<Schedule> scheduleList = scheduleRepository.findByUserId(userId);
-        return aes256.decryptScheduleListCopy(scheduleList);
+        scheduleList = aes256.decryptScheduleListCopy(scheduleList);
+        setScheduleListHash(scheduleList);
+        return scheduleList;
     }
     //Метод для получения расписания по id
     @Override
@@ -199,6 +203,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         for (Schedule schedule : scheduleList) {
             encodedScheduleList.add(getEncodedSchedule(schedule));
         }
+        setScheduleListHash(encodedScheduleList);
         return encodedScheduleList;
 
     }
@@ -224,6 +229,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     //Метод для получения разрешенного времени работы в интернете
     private long getTimeWithNetwork(long time) {
         return (long) (time * Constants.DUTY_FACTOR);
+    }
+
+    private void setScheduleHash(Schedule schedule){
+        schedule.setHashCode();
+    }
+    private void setScheduleListHash(List<Schedule> scheduleList){
+        scheduleList.forEach(Schedule::setHashCode);
     }
 
 }
