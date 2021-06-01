@@ -170,11 +170,15 @@ public class ScheduleServiceImpl implements ScheduleService {
         while (countOnDay % minDuration != 0)
             minDuration++;
         long countOfPeriod = (countOnDay / minDuration) - 4;
-        if(countOfPeriod < 1)
-            return Collections.emptyList();
-        long periodDuration = fullWorkingTime * 60000 / countOfPeriod;
         List<Schedule> scheduleList = new ArrayList<>();
         Time startTime = schedule.getStartTime();
+        if(countOfPeriod < 1)
+            return Collections.emptyList();
+        else if (countOfPeriod == 1) {
+            return Collections.singletonList(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(),
+                    new Time(schedule.getEndTime().getTime()).toString(), schedule.getDate().toString(),countOnDay , schedule.getUserId()));
+        }
+        long periodDuration = fullWorkingTime * 60000 / countOfPeriod;
         for (int i = 0; i < countOfPeriod; i++) {
             if (i == 0 || i == countOfPeriod - 1) {
                 scheduleList.add(new Schedule(schedule.getId(), new Time(startTime.getTime()).toString(),
